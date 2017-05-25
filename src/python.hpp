@@ -130,13 +130,13 @@ template<class T>
 struct vtkSmartPointer_to_python {
 	static PyObject *convert(const vtkSmartPointer<T> &p) {
 		std::ostringstream oss;
-		oss << (void*) p.GetPointer();
+		oss << (vtkObjectBase*) p.GetPointer();
 		std::string address_str = oss.str();
 
 		using namespace boost::python;
-		object obj = import("vtk").attr("vtkObject")(address_str);
-		object obj2 = import("tvtk.api").attr("tvtk").attr("to_tvtk")(obj);
-		return incref(obj2.ptr());
+		object obj = import("vtk").attr("vtkObjectBase")(address_str);
+		//object obj2 = import("tvtk.api").attr("tvtk").attr("to_tvtk")(obj);
+		return incref(obj.ptr());
 	}
 };
 

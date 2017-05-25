@@ -28,6 +28,7 @@ class Simulation {
     double_d m_min_reflect;
     double_d m_max_reflect;
     bool_d m_periodic;
+    int m_integrate_count;
 
 
 public:
@@ -45,6 +46,7 @@ public:
 
 
     void set_domain(const double_d& min, const double_d& max, const bool_d periodic) {
+        m_integrate_count = 0;
         m_min = min;
         m_max = max;
         m_min_reflect = min;
@@ -159,6 +161,11 @@ public:
             time_step(dt);
         }
         time_step(remainder_dt);
+        for (auto& particle_set: particle_sets) {
+            vtkWriteGrid("integrate",m_integrate_count++,particle_set.first->get_grid(true));
+        }
+
+
     }
 
 };

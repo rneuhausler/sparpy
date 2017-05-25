@@ -29,7 +29,7 @@ struct exponential_force {
         auto dx = create_dx(a,b);
         AccumulateWithinDistance<std::plus<double_d> > sum(m_cutoff);
 
-        f[a] = sum(b,if_else(norm(dx)!=0,(1.0/m_epsilon)*exp(-norm(dx)/m_epsilon)/norm(dx),0)*dx);
+        f[a] = sum(b,if_else(norm(dx)!=0,-(1.0/m_epsilon)*exp(-norm(dx)/m_epsilon)/norm(dx),0)*dx);
     }
 };
 

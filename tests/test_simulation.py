@@ -1,10 +1,9 @@
 import sparpy
 import random
 
-
 def test_simulation():
     N = 100
-    D = 1.0
+    D = 0.001
     lower_bound = [0,0]
     upper_bound = [1,1]
     periodic = [True,True]
@@ -17,7 +16,8 @@ def test_simulation():
 
     particles = sparpy.Particles2(N)
     for p in particles:
-        p.position = [random.uniform(lower_bound[0],upper_bound[0]),random.uniform(lower_bound[1],upper_bound[1])]
+        p.position = [random.uniform(lower_bound[0],upper_bound[0]),
+                      random.uniform(lower_bound[1],upper_bound[1])]
 
     simulation = sparpy.Simulation2()
     simulation.set_domain(lower_bound,upper_bound,periodic)
@@ -26,7 +26,39 @@ def test_simulation():
 
     for i in range(number_of_observations):
         simulation.integrate(integrate_time,dt)
-        vtk = particles.get_grid(True)
+
 
 if __name__ == "__main__":
     test_simulation()
+
+
+
+#from tvtk.api import tvtk
+#from tvtk.common import configure_input
+
+#v = mlab.figure()
+#particles_tvtk  = particles.get_grid(True)
+#surface = tvtk.DataSetSurfaceFilter()
+#configure_input(surface, particles_tvtk)
+#mapper = tvtk.PolyDataMapper()
+#configure_input(mapper, surface)
+#actor = tvtk.Actor(mapper=mapper)
+#v.scene.add_actor(actor)
+#mlab.show()
+
+#pvtk = particles.get_grid(True)
+#pvtk = particles.get_grid(True)
+#ptvtk = tvtk.to_tvtk(pvtk)
+#print '-----------------------'
+#print '-----------------------'
+#w = tvtk.XMLUnstructuredGridWriter(file_name='init.vtu')
+#configure_input(w, ptvtk)
+#w.write()
+#print 'written'
+
+     #w = tvtk.XMLUnstructuredGridWriter(file_name='init.vtu')
+        #configure_input(w, particles.get_grid(True))
+        #w.write()
+
+
+

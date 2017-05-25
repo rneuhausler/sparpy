@@ -43,7 +43,8 @@ BOOST_PYTHON_MODULE(sparpy) {
             .def("__setitem__", &setitem_particles_from_value<ParticlesType<D>>)     \
             .def("__len__", &ParticlesType<D>::size)     \
             .def("init_neighbour_search",&ParticlesType<D>::init_neighbour_search)\
-            .def("get_grid",&ParticlesType<D>::get_grid)                          \
+            .def("get_grid",&ParticlesType<D>::get_grid,             \
+                    return_value_policy<return_by_value>())                          \
             .def("append",&particles_push_back<ParticlesType<D>>)                          \
             ;                                                                   \
                                                                                     \
