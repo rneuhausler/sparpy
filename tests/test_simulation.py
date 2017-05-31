@@ -57,9 +57,38 @@ def test_lennard_jones_force():
 
     assert len(particles) == N
 
+def test_three_dimensions():
+    N = 100
+    D = 0.001
+    lower_bound = [0,0,0]
+    upper_bound = [1,1,1]
+    periodic = [False,False,False]
+    sim_time = 10.0
+    number_of_observations = 100
+    integrate_time = sim_time/number_of_observations
+    dt = 0.001
+    epsilon = 0.01
+    cutoff = 0.1
+
+    particles = sparpy.Particles3(N)
+    for p in particles:
+        p.position = [random.uniform(lower_bound[0],upper_bound[0]),
+                      random.uniform(lower_bound[1],upper_bound[1]),
+                      random.uniform(lower_bound[2],upper_bound[2])]
+
+    simulation = sparpy.Simulation3()
+    simulation.set_domain(lower_bound,upper_bound,periodic)
+    simulation.add_particles(particles,D)
+    simulation.add_force(particles,particles,sparpy.lennard_jones_force3(cutoff,epsilon))
+
+    for i in range(number_of_observations):
+        simulation.integrate(integrate_time,dt)
+
+    assert len(particles) == N
+
 
 if __name__ == "__main__":
-    test_lennard_jones_force()
+    test_three_dimensions()
 
 
 
