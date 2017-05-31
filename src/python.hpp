@@ -140,6 +140,20 @@ struct vtkSmartPointer_to_python {
 	}
 };
 
+template<class T>
+struct vtk_to_python {
+	static PyObject *convert(const T& p) {
+		std::ostringstream oss;
+		oss << (vtkObjectBase*) p;
+		std::string address_str = oss.str();
+
+		using namespace boost::python;
+		object obj = import("vtk").attr("vtkObjectBase")(address_str);
+		//object obj2 = import("tvtk.api").attr("tvtk").attr("to_tvtk")(obj);
+		return incref(obj.ptr());
+	}
+};
+
 //
 // This python to C++ converter uses the fact that VTK Python objects have an
 // attribute called __this__, which is a string containing the memory address

@@ -5,6 +5,7 @@ using namespace sparpy;
 #define VTK_PYTHON_CONVERSION(type) \
     /* register the to-python converter */ \
     to_python_converter<vtkSmartPointer<type>,vtkSmartPointer_to_python<type> >(); \
+    to_python_converter<type*,vtk_to_python<type*> >(); \
     /* register the from-python converter */ \
     converter::registry::insert(&extract_vtk_wrapped_pointer, type_id<type>());
 
@@ -43,8 +44,8 @@ BOOST_PYTHON_MODULE(sparpy) {
             .def("__setitem__", &setitem_particles_from_value<ParticlesType<D>>)     \
             .def("__len__", &ParticlesType<D>::size)     \
             .def("init_neighbour_search",&ParticlesType<D>::init_neighbour_search)\
-            .def("get_grid",&ParticlesType<D>::get_grid,             \
-                    return_value_policy<return_by_value>())                          \
+            .def("get_grid",&ParticlesType<D>::get_grid,   \
+									return_value_policy<return_by_value>()) \
             .def("append",&particles_push_back<ParticlesType<D>>)                          \
             ;                                                                   \
                                                                                     \
@@ -65,6 +66,7 @@ BOOST_PYTHON_MODULE(sparpy) {
                                                         \
         class_<Simulation<D>>("Simulation"#D,init<>()) \
             .def("add_force", &Simulation<D>::add_force<exponential_force<D>>)   \
+            .def("add_force", &Simulation<D>::add_force<lennard_jones_force<D>>)   \
             .def("add_action", &Simulation<D>::add_action)   \
             .def("set_domain", &Simulation<D>::set_domain)   \
             .def("add_particles", &Simulation<D>::add_particles)   \
@@ -72,6 +74,9 @@ BOOST_PYTHON_MODULE(sparpy) {
             ;                                            \
                                                         \
         class_<exponential_force<D>>("exponential_force"#D,init<double,double>()) \
+            ;                                            \
+                                                        \
+        class_<lennard_jones_force<D>>("lennard_jones_force"#D,init<double,double>()) \
             ;                                            \
                                                         \
         class_<hard_sphere<D>>("hard_sphere"#D,init<double>()) \
