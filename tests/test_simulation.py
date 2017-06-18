@@ -35,7 +35,7 @@ def test_lennard_jones_force():
     lower_bound = [0,0]
     upper_bound = [1,1]
     periodic = [False,False]
-    sim_time = 10.0
+    sim_time = 1.0
     number_of_observations = 100
     integrate_time = sim_time/number_of_observations
     dt = 0.001
@@ -56,6 +56,7 @@ def test_lennard_jones_force():
         simulation.integrate(integrate_time,dt)
 
     assert len(particles) == N
+
 
 def test_three_dimensions():
     N = 100
@@ -88,7 +89,7 @@ def test_three_dimensions():
 
 
 if __name__ == "__main__":
-    test_three_dimensions()
+    test_lennard_jones_force()
 
 
 

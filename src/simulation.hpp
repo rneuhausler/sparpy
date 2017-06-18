@@ -156,7 +156,6 @@ public:
     void integrate(const double for_time, const double dt) {
         const int timesteps = std::floor(for_time/dt);
         const double remainder_dt = for_time-timesteps*dt;
-
         for (int i = 0; i < timesteps; ++i) {
             time_step(dt);
         }

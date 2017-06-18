@@ -67,6 +67,7 @@ BOOST_PYTHON_MODULE(sparpy) {
         class_<Simulation<D>>("Simulation"#D,init<>()) \
             .def("add_force", &Simulation<D>::add_force<exponential_force<D>>)   \
             .def("add_force", &Simulation<D>::add_force<lennard_jones_force<D>>)   \
+            .def("add_force", &Simulation<D>::add_force<yukawa_force<D>>)   \
             .def("add_action", &Simulation<D>::add_action)   \
             .def("set_domain", &Simulation<D>::set_domain)   \
             .def("add_particles", &Simulation<D>::add_particles)   \
@@ -74,6 +75,9 @@ BOOST_PYTHON_MODULE(sparpy) {
             ;                                            \
                                                         \
         class_<exponential_force<D>>("exponential_force"#D,init<double,double>()) \
+            ;                                            \
+                                                        \
+        class_<yukawa_force<D>>("yukawa_force"#D,init<double,double>()) \
             ;                                            \
                                                         \
         class_<lennard_jones_force<D>>("lennard_jones_force"#D,init<double,double>()) \

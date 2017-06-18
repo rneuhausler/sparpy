@@ -34,6 +34,35 @@ struct exponential_force {
 };
 
 template <unsigned int D>
+struct yukawa_force {
+    typedef ParticlesType<D> particles_type;
+    typedef Vector<double,D> double_d;
+    typedef typename particles_type::position position;
+    typedef force_d<D> force;
+    typedef std::shared_ptr<ParticlesType<D>> particles_pointer;
+
+    double m_cutoff;
+    double m_epsilon;
+    yukawa_force(const double cutoff, const double epsilon):
+        m_cutoff(cutoff),m_epsilon(epsilon)
+    {}
+
+    void operator()(particles_pointer particles1, particles_pointer particles2) {
+        Symbol<position> p;
+        Symbol<force> f;
+        Symbol<id> id_;
+        Label<0,particles_type> a(*particles1);
+        Label<1,particles_type> b(*particles2);
+        auto dx = create_dx(a,b);
+        AccumulateWithinDistance<std::plus<double_d> > sum(m_cutoff);
+
+        f[a] += sum(b, if_else(norm(dx)!=0, (exp(-norm(dx)/m_epsilon)*(m_epsilon+norm(dx))/pow(norm(dx),2)) /norm(dx),0)* dx);
+    }
+};
+
+
+
+template <unsigned int D>
 struct lennard_jones_force {
     typedef ParticlesType<D> particles_type;
     typedef Vector<double,D> double_d;
