@@ -52,15 +52,19 @@ BOOST_PYTHON_MODULE(sparpy) {
         class_<ParticlesType<D>::reference >("ParticleRef"#D,no_init) \
             ADD_PROPERTY_REF("id",id,D)                               \
             ADD_PROPERTY_REF("position",position_d<D>,D)              \
+            ADD_PROPERTY_REF("velocity",velocity_d<D>,D)              \
             ADD_PROPERTY_REF("alive",alive,D)                         \
-            ADD_PROPERTY_REF("scalar",scalar,D)          \
+            ADD_PROPERTY_REF("scalar",scalar,D)                \
+            ADD_PROPERTY_REF("species",species,D)          \
             ADD_PROPERTY_REF("force",force_d<D>,D)          \
             ;                                                   \
         class_<ParticlesType<D>::value_type >("Particle"#D,init<>()) \
             ADD_PROPERTY("id",id,D)         \
             ADD_PROPERTY("position",position_d<D>,D)     \
+            ADD_PROPERTY("velocity",velocity_d<D>,D)     \
             ADD_PROPERTY("alive",alive,D)                \
             ADD_PROPERTY("scalar",scalar,D)              \
+            ADD_PROPERTY("species",species,D)              \
             ADD_PROPERTY("force",force_d<D>,D)          \
             ;                                            \
                                                         \

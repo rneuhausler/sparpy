@@ -23,13 +23,14 @@ struct exponential_force {
     void operator()(particles_pointer particles1, particles_pointer particles2) {
         Symbol<position> p;
         Symbol<force> f;
+        Symbol<species> w;
         Symbol<id> id_;
         Label<0,particles_type> a(*particles1);
         Label<1,particles_type> b(*particles2);
         auto dx = create_dx(a,b);
         AccumulateWithinDistance<std::plus<double_d> > sum(m_cutoff);
 
-        f[a] += sum(b,if_else(norm(dx)!=0,-(1.0/m_epsilon)*exp(-norm(dx)/m_epsilon)/norm(dx),0)*dx);
+        f[a] += sum(b,if_else(norm(dx)!=0 && w[b]==0,(1.0/m_epsilon)*exp(-norm(dx)/m_epsilon)/norm(dx),0)*dx);
     }
 };
 

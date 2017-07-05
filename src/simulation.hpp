@@ -12,6 +12,7 @@ class Simulation {
     typedef ParticlesType<D> particles_type;
     typedef typename ParticlesType<D>::position position;
     typedef force_d<D> force;
+    typedef velocity_d<D> velocity;
     typedef Vector<double,D> double_d;
     typedef Vector<bool,D> bool_d;
     typedef std::shared_ptr<ParticlesType<D>> particles_pointer;
@@ -95,11 +96,13 @@ public:
         for (typename particles_type::reference i: *particles) {
             double_d& p = get<position>(i);
             double_d& f = get<force>(i);
+            double_d& v = get<velocity>(i);
             auto& g = get<Aboria::random>(i);
-            const double scale = 1.0/(1+f.norm()*dt);
+            //const double scale = 1.0/(1+f.norm()*dt);
             const double diffusion = std::sqrt(2*diffusion_constant*dt);
             for (int i = 0; i < D; ++i) {
-                p[i] += diffusion*N(g) + dt*f[i]*scale;
+                p[i] += dt*v[i];
+                v[i] += diffusion*N(g) + dt*f[i];
             }
         }
         particles->update_positions();
@@ -151,6 +154,8 @@ public:
         for (auto& particle_set: particle_sets) {
             reflective_boundaries(particle_set.first);
         }
+
+
     }
 
     void integrate(const double for_time, const double dt) {
@@ -160,8 +165,11 @@ public:
             time_step(dt);
         }
         time_step(remainder_dt);
+        int i = 0;
         for (auto& particle_set: particle_sets) {
-            vtkWriteGrid("integrate",m_integrate_count++,particle_set.first->get_grid(true));
+            std::string name =  "integrate_" + std::to_string(i) + "_";
+            vtkWriteGrid(name.c_str(),m_integrate_count++,particle_set.first->get_grid(true));
+            ++i;
         }
 
 

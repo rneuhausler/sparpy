@@ -18,7 +18,7 @@ find_package(PythonLibs REQUIRED)
 list(APPEND sparpy_LIBRARIES ${PYTHON_LIBRARIES})
 list(APPEND sparpy_INCLUDES ${PYTHON_INCLUDE_DIRS})
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wno-deprecated -std=c++14")
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wno-deprecated -Wno-inconsistent-missing-override -std=c++14")
 set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 
 # Aboria
