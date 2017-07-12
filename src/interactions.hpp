@@ -29,8 +29,10 @@ struct exponential_force {
         Label<1,particles_type> b(*particles2);
         auto dx = create_dx(a,b);
         AccumulateWithinDistance<std::plus<double_d> > sum(m_cutoff);
-
+        std::cout << "calc force" << m_epsilon << m_cutoff<< std::endl;
         f[a] += sum(b,if_else(norm(dx)!=0 && w[b]==0,(1.0/m_epsilon)*exp(-norm(dx)/m_epsilon)/norm(dx),0)*dx);
+        //f[a] += sum(b,if_else(norm(dx)!=0,(1.0/m_epsilon)*exp(-norm(dx)/m_epsilon)/norm(dx),0)*dx);
+        
     }
 };
 

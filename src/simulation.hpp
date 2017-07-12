@@ -68,6 +68,7 @@ public:
 
     void add_particles(particles_pointer particles, const double diffusion_constant) {
         if (m_domain_has_been_set) {
+            std::cout << "set domain"<<m_min<<m_max<<std::endl;
             particles->init_neighbour_search(m_min,m_max,m_periodic);
         }
         typename particles_storage_type::iterator search = particle_sets.find(particles);
@@ -100,9 +101,10 @@ public:
             auto& g = get<Aboria::random>(i);
             //const double scale = 1.0/(1+f.norm()*dt);
             const double diffusion = std::sqrt(2*diffusion_constant*dt);
+            const double beta = 100;
             for (int i = 0; i < D; ++i) {
                 p[i] += dt*v[i];
-                v[i] += diffusion*N(g) + dt*f[i];
+                v[i] += beta*diffusion*N(g) + dt*f[i] - beta*v[i]*dt;
             }
         }
         particles->update_positions();
