@@ -25,6 +25,7 @@ set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 list(APPEND sparpy_INCLUDES Aboria/src)
 list(APPEND sparpy_INCLUDES Aboria/third-party)
 
+
 include_directories(src ${sparpy_INCLUDES})
 
 set(sparpy_SOURCE

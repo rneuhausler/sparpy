@@ -29,12 +29,46 @@ struct exponential_force {
         Label<1,particles_type> b(*particles2);
         auto dx = create_dx(a,b);
         AccumulateWithinDistance<std::plus<double_d> > sum(m_cutoff);
-        std::cout << "calc force" << m_epsilon << m_cutoff<< std::endl;
+        //std::cout << "calc force" << m_epsilon << m_cutoff<< std::endl;
         f[a] += sum(b,if_else(norm(dx)!=0 && w[b]==0,(1.0/m_epsilon)*exp(-norm(dx)/m_epsilon)/norm(dx),0)*dx);
         //f[a] += sum(b,if_else(norm(dx)!=0,(1.0/m_epsilon)*exp(-norm(dx)/m_epsilon)/norm(dx),0)*dx);
         
     }
 };
+
+
+
+template <unsigned int D>
+struct morse_force {
+  typedef ParticlesType<D> particles_type;
+  typedef Vector<double,D> double_d;
+  typedef typename particles_type::position position;
+  typedef force_d<D> force;
+  typedef std::shared_ptr<ParticlesType<D>> particles_pointer;
+  
+  double m_cutoff;
+  double m_equilibrium_distance;
+  double m_well_depth
+  double m_well_width
+  double m_repulsive
+  morse_force(const double cutoff, const double equilibrium_distance, const double well_depth, const double well_width, const double repulsive):
+    m_cutoff(cutoff),m_equilibrium_distance(equilibrium_distance),m_well_depth(well_depth),m_well_width(well_width),m_repulsive
+  {}
+  
+  void operator()(particles_pointer particles1, particles_pointer particles2) {
+    Symbol<position> p;
+    Symbol<force> f;
+    Symbol<id> id_;
+    Label<0,particles_type> a(*particles1);
+    Label<1,particles_type> b(*particles2);
+    auto dx = create_dx(a,b);
+    AccumulateWithinDistance<std::plus<double_d> > sum(m_cutoff);
+    
+    f[a] += sum(b, if_else(norm(dx)!=0, (m_repulsive*m_well_depth*(pow(1-exp(-m_well_width*(dx-m_equilibrium_distance)),2)-1));
+  }
+};
+  
+  
 
 template <unsigned int D>
 struct yukawa_force {
