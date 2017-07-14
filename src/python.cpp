@@ -82,7 +82,7 @@ BOOST_PYTHON_MODULE(sparpy) {
         class_<exponential_force<D>>("exponential_force"#D,init<double,double>()) \
             ;                                            \
                                                         \
-        class_<more_potential_force<D>>("morse_force"#D,init<double,double>()) \
+        class_<morse_force<D>>("morse_force"#D,init<double,double,double,double,double>()) \
             ;                                             \
                                                         \
         class_<yukawa_force<D>>("yukawa_force"#D,init<double,double>()) \
@@ -98,6 +98,7 @@ BOOST_PYTHON_MODULE(sparpy) {
     ADD_DIMENSION(1)
     ADD_DIMENSION(2)
     ADD_DIMENSION(3)
+      
     //.def("copy_from_vtk_grid",&ParticlesType<D>::copy_from_vtk_grid)      \
 
 }
