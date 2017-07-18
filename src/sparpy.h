@@ -10,11 +10,12 @@ using namespace Aboria;
 using namespace boost::python;
 
 ABORIA_VARIABLE(scalar, double, "an example scalar")
-ABORIA_VARIABLE(species, double, "species (0=coral, 1=algae, 2=turf)")
+ABORIA_VARIABLE(species, double, "species (0=coral, 1=algae, 2=turf, 3=fish)")
+ABORIA_VARIABLE(density, double4, "density")
 ABORIA_VARIABLE_VECTOR(force_d,double,"force")
 ABORIA_VARIABLE_VECTOR(velocity_d,double,"velocity")
 template <unsigned int D>
-using ParticlesType = Particles<std::tuple<scalar,species,velocity_d<D>,force_d<D>>,D>;
+using ParticlesType = Particles<std::tuple<scalar,species,density,velocity_d<D>,force_d<D>>,D>;
 
 
 }
