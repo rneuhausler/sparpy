@@ -52,30 +52,41 @@ BOOST_PYTHON_MODULE(sparpy) {
         class_<ParticlesType<D>::reference >("ParticleRef"#D,no_init) \
             ADD_PROPERTY_REF("id",id,D)                               \
             ADD_PROPERTY_REF("position",position_d<D>,D)              \
+            ADD_PROPERTY_REF("velocity",velocity_d<D>,D)              \
             ADD_PROPERTY_REF("alive",alive,D)                         \
-            ADD_PROPERTY_REF("scalar",scalar,D)          \
+            ADD_PROPERTY_REF("scalar",scalar,D)                \
+            ADD_PROPERTY_REF("density",density,D)              \
+            ADD_PROPERTY_REF("species",species,D)          \
             ADD_PROPERTY_REF("force",force_d<D>,D)          \
             ;                                                   \
         class_<ParticlesType<D>::value_type >("Particle"#D,init<>()) \
             ADD_PROPERTY("id",id,D)         \
             ADD_PROPERTY("position",position_d<D>,D)     \
+            ADD_PROPERTY("velocity",velocity_d<D>,D)     \
             ADD_PROPERTY("alive",alive,D)                \
             ADD_PROPERTY("scalar",scalar,D)              \
+            ADD_PROPERTY("density",density,D)              \
+            ADD_PROPERTY("species",species,D)              \
             ADD_PROPERTY("force",force_d<D>,D)          \
             ;                                            \
                                                         \
         class_<Simulation<D>>("Simulation"#D,init<>()) \
             .def("add_force", &Simulation<D>::add_force<exponential_force<D>>)   \
+            .def("add_force", &Simulation<D>::add_force<morse_force<D>>)   \
             .def("add_force", &Simulation<D>::add_force<lennard_jones_force<D>>)   \
             .def("add_force", &Simulation<D>::add_force<yukawa_force<D>>)   \
-            .def("add_action", &Simulation<D>::add_action)   \
+            .def("add_action", &Simulation<D>::add_action<calculate_density<D>>)   \
             .def("set_domain", &Simulation<D>::set_domain)   \
             .def("add_particles", &Simulation<D>::add_particles)   \
             .def("integrate", &Simulation<D>::integrate)   \
+            .def("update_grid", &Simulation<D>::integrate)   \
             ;                                            \
                                                         \
         class_<exponential_force<D>>("exponential_force"#D,init<double,double>()) \
             ;                                            \
+                                                        \
+        class_<morse_force<D>>("morse_force"#D,init<double,double,double,double,double,double>()) \
+            ;                                             \
                                                         \
         class_<yukawa_force<D>>("yukawa_force"#D,init<double,double>()) \
             ;                                            \
@@ -83,13 +94,15 @@ BOOST_PYTHON_MODULE(sparpy) {
         class_<lennard_jones_force<D>>("lennard_jones_force"#D,init<double,double>()) \
             ;                                            \
                                                         \
-        class_<hard_sphere<D>>("hard_sphere"#D,init<double>()) \
+        class_<calculate_density<D>>("calculate_density"#D,init<double,double>()) \
             ;                                            \
+                                                               \
 
 
     ADD_DIMENSION(1)
     ADD_DIMENSION(2)
     ADD_DIMENSION(3)
+    ADD_DIMENSION(4)
     //.def("copy_from_vtk_grid",&ParticlesType<D>::copy_from_vtk_grid)      \
 
 }

@@ -12,6 +12,7 @@ class Simulation {
     typedef ParticlesType<D> particles_type;
     typedef typename ParticlesType<D>::position position;
     typedef force_d<D> force;
+    typedef velocity_d<D> velocity;
     typedef Vector<double,D> double_d;
     typedef Vector<bool,D> bool_d;
     typedef std::shared_ptr<ParticlesType<D>> particles_pointer;
@@ -38,12 +39,11 @@ public:
             const F& calc_force) {
         forces.push_back(std::bind(calc_force,particles1,particles2));
     }
-
+    template <typename F>
     void add_action(particles_pointer particles1, particles_pointer particles2, 
-            const std::function<void(particles_pointer,particles_pointer)>& calc_action) {
+            const F& calc_action) {
         actions.push_back(std::bind(calc_action,particles1,particles2));
     }
-
 
     void set_domain(const double_d& min, const double_d& max, const bool_d periodic) {
         m_integrate_count = 0;
@@ -67,6 +67,7 @@ public:
 
     void add_particles(particles_pointer particles, const double diffusion_constant) {
         if (m_domain_has_been_set) {
+            std::cout << "set domain"<<m_min<<m_max<<std::endl;
             particles->init_neighbour_search(m_min,m_max,m_periodic);
         }
         typename particles_storage_type::iterator search = particle_sets.find(particles);
@@ -76,6 +77,7 @@ public:
             particle_sets.insert(std::make_pair(particles,diffusion_constant));
         }
     }
+    
 
     void euler_integration(const double dt, 
                            particles_pointer particles, 
@@ -95,11 +97,14 @@ public:
         for (typename particles_type::reference i: *particles) {
             double_d& p = get<position>(i);
             double_d& f = get<force>(i);
+            double_d& v = get<velocity>(i);
             auto& g = get<Aboria::random>(i);
-            const double scale = 1.0/(1+f.norm()*dt);
+            //const double scale = 1.0/(1+f.norm()*dt);
             const double diffusion = std::sqrt(2*diffusion_constant*dt);
+            const double beta = 100;
             for (int i = 0; i < D; ++i) {
-                p[i] += diffusion*N(g) + dt*f[i]*scale;
+                p[i] += dt*v[i];
+                v[i] += beta*diffusion*N(g) + dt*f[i] - beta*v[i]*dt;
             }
         }
         particles->update_positions();
@@ -136,7 +141,7 @@ public:
         for (auto& calc_force: forces) {
             calc_force();
         }
-
+        
         // integrate
         for (auto& particle_set: particle_sets) {
             euler_integration(dt,particle_set.first,particle_set.second);
@@ -151,6 +156,8 @@ public:
         for (auto& particle_set: particle_sets) {
             reflective_boundaries(particle_set.first);
         }
+
+
     }
 
     void integrate(const double for_time, const double dt) {
@@ -160,11 +167,37 @@ public:
             time_step(dt);
         }
         time_step(remainder_dt);
+        int i = 0;
         for (auto& particle_set: particle_sets) {
-            vtkWriteGrid("integrate",m_integrate_count++,particle_set.first->get_grid(true));
+            std::string name =  "integrate_" + std::to_string(i) + "_";
+            vtkWriteGrid(name.c_str(),m_integrate_count++,particle_set.first->get_grid(true));
+            ++i;
         }
 
 
+    }
+    
+    void update_grid(particles_pointer particles, const double dt,
+                     const double c_to_t_rate) {
+     
+      std::uniform_real_distribution<double> U;
+      
+      for (typename particles_type::reference i: *particles) {
+        double_d& p = get<position>(i);
+        double_d& f = get<force>(i);
+        double_d& v = get<velocity>(i);
+        double& s = get<species>(i);
+        double& d = get<density>(i);
+        auto& g = get<Aboria::random>(i);
+        //const double scale = 1.0/(1+f.norm()*dt);
+        if (s == 0) {
+          const double prob_of_death = dt*c_to_t_rate;
+          if (U(g) < prob_of_death) {
+            s = 1;
+          }
+        }
+      }
+      
     }
 
 };
